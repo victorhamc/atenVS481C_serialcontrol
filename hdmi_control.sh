@@ -10,7 +10,8 @@
 #   Bus 001 Device 003: ID 046d:c05a Logitech, Inc. M90/M100 Optical Mouse
 #   Bus 001 Device 002: ID 0bda:5411 Realtek Semiconductor Corp. 
 #   Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
-# echo "067b 23a3" > /sys/bus/usb-serial/drivers/pl2303/new_id
+# if this does not work with sudo, change to root (sudo su)
+sudo echo "067b 23a3" > /sys/bus/usb-serial/drivers/pl2303/new_id
 
 # 3. Set baud rate
 sudo stty -F /dev/ttyUSB0 19200

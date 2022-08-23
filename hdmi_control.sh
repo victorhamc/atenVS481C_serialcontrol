@@ -1,5 +1,6 @@
-#!/bin/sh
-
+# sudo crontab -e
+# add this line:
+#   @reboot /bin/bash /home/ubuntu/atenVS481C_serialcontrol/hdmi_control.sh
 ############ FUNCTIONS ############
 
 printd(){
@@ -7,12 +8,12 @@ printd(){
 }
 
 send_rs232(){
-        sudo echo -e $1 > $2
+        echo -e $1 > $2
 }
 
 ############ VARIABLES ############
 
-HOSTDEV="RASPI" #Use TEGRA for Jetson embedded
+HOSTDEV="RASPI" # Use TEGRA for Jetson embedded, no difference for now in terms of path for ko files
 
 ###################################
 
@@ -69,16 +70,28 @@ sudo chmod o+rw $DEVTTYUSB
 
 # 5. Execute commands for HDMI Switch
 while true; do
-	printd "switch 01 active"
-	send_rs232 "sw i01" $DEVTTYUSB
-	sleep 2 # sleep for 2 secs
-	printd "switch 01 active"
-	send_rs232 "sw i02" $DEVTTYUSB
-	sleep 2
-	printd "switch 01 active"
-	send_rs232 "sw i03" $DEVTTYUSB
-	sleep 2
-	printd "switch 01 active"
-	send_rs232 "sw i04" $DEVTTYUSB
-	sleep 2
+	if [ -f /tmp/pause ]
+	then
+		echo " -> HDMI control paused!"
+		sleep 2
+	else
+		printd "switch 01 active"
+		send_rs232 "sw i01" $DEVTTYUSB
+		sleep 2 # sleep for 2 secs
+		printd "switch 02 active"
+		send_rs232 "sw i02" $DEVTTYUSB
+		sleep 2
+		printd "switch 03 active"
+		send_rs232 "sw i03" $DEVTTYUSB
+		sleep 2
+		printd "switch 04 active"
+		send_rs232 "sw i04" $DEVTTYUSB
+		sleep 2
+	fi
+
+	if [ -f /tmp/stop ]
+	then
+		echo " -> HDMI control full exit!"
+		break
+	fi
 done

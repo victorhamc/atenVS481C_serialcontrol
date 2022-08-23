@@ -36,6 +36,10 @@ then
 			echo "Inserting module for TEGRA"
 			sudo insmod /lib/modules/$(uname -r)/kernel/drivers/usb/serial/pl2303.ko
 		;;
+		*)
+			echo "Unknown Host Device!"
+			exit 1
+		;;
 	esac
 else
 	echo "PL2303 module already inserted"

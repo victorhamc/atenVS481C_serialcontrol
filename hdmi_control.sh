@@ -1,7 +1,17 @@
 # sudo crontab -e
 # add this line:
 #   @reboot /bin/bash /home/ubuntu/atenVS481C_serialcontrol/hdmi_control.sh
+
+############ VARIABLES ############
+
+HOSTDEV="RASPI" # Use TEGRA for Jetson embedded, no difference for now in terms of path for ko files
+LOGTAG="hdmicontrol"
+
 ############ FUNCTIONS ############
+
+printl(){
+	logger -s -t $LOGTAG $1
+}
 
 printd(){
         echo "`date +%x%t%X%t` $1"
@@ -10,12 +20,6 @@ printd(){
 send_rs232(){
         echo -e $1 > $2
 }
-
-############ VARIABLES ############
-
-HOSTDEV="RASPI" # Use TEGRA for Jetson embedded, no difference for now in terms of path for ko files
-
-###################################
 
 # 1. Insert drivers ATEN-UC232A1 which is prolific chip based
 # sudo insmod /lib/modules/4.9.253-tegra/kernel/drivers/usb/serial/pl2303.ko
@@ -26,19 +30,23 @@ MODRS232=`lsmod | grep -ie pl2303`
 
 if [ -z "$MODRS232" ]
 then
-	echo "Inserting module for PL2303 Prolific USB to RS232"
+	printl "Inserting module for PL2303 Prolific USB to RS232"
 	case "$HOSTDEV" in
 		"RASPI")
-			echo "Inserting module for RASPI"
+			printl "Inserting module for RASPI"
 			sudo insmod /lib/modules/$(uname -r)/kernel/drivers/usb/serial/pl2303.ko
 		;;
 		"TEGRA")
-			echo "Inserting module for TEGRA"
+			printl "Inserting module for TEGRA"
 			sudo insmod /lib/modules/$(uname -r)/kernel/drivers/usb/serial/pl2303.ko
+		;;
+		*)
+			printl "Unsupported host device!"
+			exit 1
 		;;
 	esac
 else
-	echo "PL2303 module already inserted"
+	printl "PL2303 module already inserted"
 fi
 
 # 2. Add prolific ID so it is listed in: lsusb
@@ -50,16 +58,16 @@ fi
 # 	Device ID number might be different for different cables. Pay attention.
 # echo "067b 23a3" > /sys/bus/usb-serial/drivers/pl2303/new_id
 
-echo "*** ### HDMI HUB CONTROL START ### ***"
+printl "*** ### HDMI HUB CONTROL START ### ***"
 
 DEVTTYUSB=`ls /dev/ttyUSB*`
 
 if [ -z "$DEVTTYUSB" ]
 then
-	echo "ERROR: RS232 Cable is not connected, check setup"
+	printl "ERROR: RS232 Cable is not connected, check setup"
 	exit 1
 else
-	echo "RS232 to USB cable path: $DEVTTYUSB"
+	printl "RS232 to USB cable path: $DEVTTYUSB"
 fi
 
 # 3. Set baud rate after every reboot
@@ -72,26 +80,26 @@ sudo chmod o+rw $DEVTTYUSB
 while true; do
 	if [ -f /tmp/pause ]
 	then
-		echo " -> HDMI control paused!"
+		printl " -> HDMI control paused!"
 		sleep 2
 	else
-		printd "switch 01 active"
+		printl "switch 01 active"
 		send_rs232 "sw i01" $DEVTTYUSB
-		sleep 2 # sleep for 2 secs
-		printd "switch 02 active"
+		sleep 300 # sleep for 5 mins
+		printl "switch 02 active"
 		send_rs232 "sw i02" $DEVTTYUSB
-		sleep 2
-		printd "switch 03 active"
-		send_rs232 "sw i03" $DEVTTYUSB
-		sleep 2
-		printd "switch 04 active"
-		send_rs232 "sw i04" $DEVTTYUSB
-		sleep 2
+		sleep 30 # sleep for 30 secs
+		# printl "switch 03 active"
+		# send_rs232 "sw i03" $DEVTTYUSB
+		# sleep 2
+		# printl "switch 04 active"
+		# send_rs232 "sw i04" $DEVTTYUSB
+		# sleep 2
 	fi
 
 	if [ -f /tmp/stop ]
 	then
-		echo " -> HDMI control full exit!"
+		printl " -> HDMI control full exit!"
 		break
 	fi
 done

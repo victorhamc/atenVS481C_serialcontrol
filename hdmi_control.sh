@@ -1,7 +1,10 @@
 #!/bin/sh
 
 # 1. Insert drivers ATEN-UC232A1 which is prolific chip based
-# sudo insmod /lib/modules/4.9.253-tegra/kernel/drivers/usb/serial/pl2303.ko
+# Jetson NANO L4Tegra
+#  sudo insmod /lib/modules/4.9.253-tegra/kernel/drivers/usb/serial/pl2303.ko
+# Raspberry Pi Ubuntu 22.04.1
+#  sudo insmod /lib/modules/5.15.0-1013-raspi/kernel/drivers/usb/serial/pl2303.ko
 
 # 2. Add prolific ID so it is listed in: lsusb
 #   Bus 002 Device 002: ID 0bda:0411 Realtek Semiconductor Corp. 

@@ -42,6 +42,7 @@ then
 		;;
 		*)
 			printl "Unsupported host device!"
+			echo "Unknown Host Device!"
 			exit 1
 		;;
 	esac

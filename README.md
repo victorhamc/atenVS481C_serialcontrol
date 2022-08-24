@@ -44,6 +44,6 @@ dtoverlay=gpio-shutdown,gpio_pin=17,active_low=1,debounce=1500
 
 ## Jetson Nano (or other nVidia EmbeddedBoards)
 
-Follow steps 1-3 on the Raspberry Pi section. Extra instructions are included to add the USB-RS232 ID as part of the initial setup.
+Follow steps 1-3 on the Raspberry Pi section. Extra instructions are included (in the main script as comments) to add the USB-RS232 ID as part of the initial setup.
 
 Instructions to add Button to turn on/off the development board will be **added** in the future (gpio button support).

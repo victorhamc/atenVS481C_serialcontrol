@@ -33,7 +33,9 @@ dtoverlay=gpio-shutdown,debounce=1500
 ```
 
 **Note**
-The **gpio-shutdown overlay** for powering the board on/off is available only on GPIO3 (Pin 5 on the header). We can configure the gpio-shutdown overlay to be on another pin but this will only be able to power off the board and **not turn it on again**. 
+The **gpio-shutdown overlay** for powering the board on/off is available only on GPIO3 (Pin 5 on the header). This pin is shared with i2c (enabled by default) so we need to disable it in order to use it as gpio. 
+
+We could configure the gpio-shutdown overlay to be on another pin but this will only be able to power off the board and **not turn it on again**. 
 
 Example configuration for GPIO 17 for power off function, active low (pulse to ground) and with software based debounce of 1500 ms:
 ```
